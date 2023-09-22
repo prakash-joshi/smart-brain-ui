@@ -8,14 +8,14 @@ import ParticlesBg from 'particles-bg';
 import './App.css'
 
 
-const backgroundDesigns = ["color", "ball", "lines", "thick", "circle", "cobweb", "polygon", "square", "tadpole", "fountain", "random", "custom"]
+const backgroundDesigns = ["circle", "cobweb", "square", "tadpole", "random", "custom", "ball", "thick", "lines", "polygon", "fountain", "color"]
 const PAT = 'a9b4ebcc1ec54675a183c5b8e951c2eb';
 const USER_ID = 'joshi-prakash';
 const APP_ID = 'facerecognitionbrain';
 const MODEL_ID = 'face-detection';
 const returnClarifyAPIRequestOptions = (imageUrl) => {
     // const MODEL_VERSION_ID = '6dc7e46bc9124c5c8824be4822abe105'; //  this is optional
-    const IMAGE_URL = "https://samples.clarifai.com/metro-north.jpg"; //imageUrl;
+    const IMAGE_URL = imageUrl;
     const raw = JSON.stringify({
         "user_app_id": {
             "user_id": USER_ID,
@@ -49,7 +49,26 @@ class App extends Component {
         this.state = {
             input: '',
             imgUrl: '',
+            box: {}
         }
+    }
+
+    calculateFaceLocation = (data) => {
+        const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box;
+        console.log('sasd: ', clarifaiFace);
+        const image = document.getElementById('inputImage');
+        const width = Number(image.width);
+        const height = Number(image.height);
+        return {
+            leftCol: clarifaiFace.left_col * width,
+            topRow: clarifaiFace.top_row * height,
+            rightCol: width - (clarifaiFace.right_col * width),
+            bottomRow: height - (clarifaiFace.bottom_row * height)
+        }
+    }
+
+    displayFaceBox = (box) => {
+        this.setState({ box: box });
     }
 
     onInputChange = (event) => {
@@ -60,9 +79,7 @@ class App extends Component {
         this.setState({ imgUrl: this.state.input });
         fetch("https://api.clarifai.com/v2/models/" + MODEL_ID + "/outputs", returnClarifyAPIRequestOptions(this.state.input))
             .then(response => response.json())
-            .then(result => {
-                console.log('deep data : ', result.outputs[0].data.regions[0].region_info.bounding_box);
-            })
+            .then(result => this.displayFaceBox(this.calculateFaceLocation(result)))
             .catch(error => console.log('error', error));
 
     }
@@ -75,7 +92,7 @@ class App extends Component {
                     <Logo />
                     <Rank />
                     <ImageLinkForm onInputChange={this.onInputChange} onButtonSubmit={this.onButtonSubmit} />
-                    <FaceRecognition imgUrl={this.state.imgUrl} />
+                    <FaceRecognition box={this.state.box} imgUrl={this.state.imgUrl} />
                 </div>
             </div>
         )
