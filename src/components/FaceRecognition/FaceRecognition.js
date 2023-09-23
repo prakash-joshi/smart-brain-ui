@@ -3,11 +3,16 @@ import './FaceRecognition.css';
 
 const FaceRecognition = ({ box, imgUrl }) => {
     console.log('box : ', box);
+
+    const faces = box.map((ele, i) => {
+        return (<div key={i} className='bounding-box' style={{ top: ele.topRow, right: ele.rightCol, bottom: ele.bottomRow, left: ele.leftCol }}></div>);
+    })
+
     return (
         <div className='center ma'>
             <div className='absolute mt2'>
                 <img id="inputImage" src={imgUrl} alt='' width='300px' height='auto' />
-                <div className='bounding-box' style={{ top: box.topRow, right: box.rightCol, bottom: box.bottomRow, left: box.leftCol }}></div>
+                {faces}
             </div>
         </div >
     )

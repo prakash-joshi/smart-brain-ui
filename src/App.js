@@ -49,22 +49,29 @@ class App extends Component {
         this.state = {
             input: '',
             imgUrl: '',
-            box: {}
+            box: []
         }
     }
 
     calculateFaceLocation = (data) => {
-        const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box;
-        console.log('sasd: ', clarifaiFace);
+        const regions = data.outputs[0].data.regions;
+        // console.log('sasd: ', clarifaiFace);
         const image = document.getElementById('inputImage');
         const width = Number(image.width);
         const height = Number(image.height);
-        return {
-            leftCol: clarifaiFace.left_col * width,
-            topRow: clarifaiFace.top_row * height,
-            rightCol: width - (clarifaiFace.right_col * width),
-            bottomRow: height - (clarifaiFace.bottom_row * height)
-        }
+
+
+        let box_arr = regions.map(region => {
+            const clarifaiFace = region.region_info.bounding_box;
+            return {
+                leftCol: clarifaiFace.left_col * width,
+                topRow: clarifaiFace.top_row * height,
+                rightCol: width - (clarifaiFace.right_col * width),
+                bottomRow: height - (clarifaiFace.bottom_row * height)
+            }
+
+        })
+        return box_arr;
     }
 
     displayFaceBox = (box) => {
