@@ -6,9 +6,11 @@ import Logo from './components/Logo/Logo';
 import Rank from './components/Rank/Rank';
 import ParticlesBg from 'particles-bg';
 import './App.css'
+import SignIn from './components/SignIn/SignIn';
+import Register from './components/Register/Register';
 
 
-const backgroundDesigns = ["circle", "cobweb", "square", "tadpole", "random", "custom", "ball", "thick", "lines", "polygon", "fountain", "color"]
+const backgroundDesigns = ["circle", "cobweb", "square", "tadpole", "random", "custom", "fountain", "color"]
 const PAT = 'a9b4ebcc1ec54675a183c5b8e951c2eb';
 const USER_ID = 'joshi-prakash';
 const APP_ID = 'facerecognitionbrain';
@@ -49,17 +51,17 @@ class App extends Component {
         this.state = {
             input: '',
             imgUrl: '',
-            box: []
+            box: [],
+            route: 'signin',
+            isSignedIn: false
         }
     }
 
     calculateFaceLocation = (data) => {
         const regions = data.outputs[0].data.regions;
-        // console.log('sasd: ', clarifaiFace);
         const image = document.getElementById('inputImage');
         const width = Number(image.width);
         const height = Number(image.height);
-
 
         let box_arr = regions.map(region => {
             const clarifaiFace = region.region_info.bounding_box;
@@ -90,16 +92,36 @@ class App extends Component {
             .catch(error => console.log('error', error));
 
     }
+    onRouteChange = (route) => {
+        if (route === 'signout') {
+            this.setState({ isSignedIn: false })
+        }
+        else {
+            this.setState({ isSignedIn: true })
+        }
+        this.setState({ route: route })
+    }
     render() {
         return (
             <div>
                 <div className="App">
-                    <ParticlesBg type={backgroundDesigns[(Math.floor(Math.random() * backgroundDesigns.length))]} bg={true} />
-                    <Navigation />
-                    <Logo />
-                    <Rank />
-                    <ImageLinkForm onInputChange={this.onInputChange} onButtonSubmit={this.onButtonSubmit} />
-                    <FaceRecognition box={this.state.box} imgUrl={this.state.imgUrl} />
+                    {/* <ParticlesBg type={backgroundDesigns[(Math.floor(Math.random() * backgroundDesigns.length))]} bg={true} /> */}
+                    <ParticlesBg type='cobweb' bg={true} />
+
+                    <Navigation onRouteChange={this.onRouteChange} isSignedIn={this.state.isSignedIn} />
+                    {this.state.route === 'home'
+                        ? <div>
+                            <Logo />
+                            <Rank />
+                            <ImageLinkForm onInputChange={this.onInputChange} onButtonSubmit={this.onButtonSubmit} />
+                            <FaceRecognition box={this.state.box} imgUrl={this.state.imgUrl} />
+                        </div>
+                        : (
+                            this.state.route === 'signin'
+                                ? <SignIn onRouteChange={this.onRouteChange} />
+                                : <Register onRouteChange={this.onRouteChange} />
+                        )
+                    }
                 </div>
             </div>
         )
