@@ -12,15 +12,12 @@ class Register extends Component {
     }
 
     onNameChange = (event) => {
-        console.log('name :', event.target.value);
         this.setState({ name: event.target.value })
     }
     onEmailChange = (event) => {
-        console.log('email :', event.target.value);
         this.setState({ email: event.target.value })
     }
     onPasswordChange = (event) => {
-        console.log('password :', event.target.value);
         this.setState({ password: event.target.value })
     }
 

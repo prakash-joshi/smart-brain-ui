@@ -10,11 +10,9 @@ class SignIn extends Component {
     }
 
     onEmailChange = (event) => {
-        console.log('email :', event.target.value);
         this.setState({ signInEmail: event.target.value })
     }
     onPasswordChange = (event) => {
-        console.log('password :', event.target.value);
         this.setState({ signInPassword: event.target.value })
     }
     onSubmitSignIn = () => {
