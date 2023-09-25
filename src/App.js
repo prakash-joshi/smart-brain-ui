@@ -10,7 +10,7 @@ import SignIn from './components/SignIn/SignIn';
 import Register from './components/Register/Register';
 
 
-const backgroundDesigns = ["circle", "cobweb", "square", "tadpole", "random", "custom", "fountain", "color"]
+// const backgroundDesigns = ["circle", "cobweb", "square", "tadpole", "random", "custom", "fountain", "color"]
 const PAT = 'a9b4ebcc1ec54675a183c5b8e951c2eb';
 const USER_ID = 'joshi-prakash';
 const APP_ID = 'facerecognitionbrain';
@@ -96,7 +96,7 @@ class App extends Component {
         if (route === 'signout') {
             this.setState({ isSignedIn: false })
         }
-        else {
+        else if (route === "home") {
             this.setState({ isSignedIn: true })
         }
         this.setState({ route: route })
