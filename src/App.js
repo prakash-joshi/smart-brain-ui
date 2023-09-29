@@ -10,7 +10,7 @@ import SignIn from './components/SignIn/SignIn';
 import Register from './components/Register/Register';
 
 
-// const backgroundDesigns = ["circle", "cobweb", "square", "tadpole", "random", "custom", "fountain", "color"]
+const backgroundDesigns = ["circle", "cobweb", "square", "tadpole", "random", "custom", "fountain", "color"]
 const PAT = 'a9b4ebcc1ec54675a183c5b8e951c2eb';
 const USER_ID = 'joshi-prakash';
 const APP_ID = 'facerecognitionbrain';
@@ -45,23 +45,24 @@ const returnClarifyAPIRequestOptions = (imageUrl) => {
     return requestOptions;
 }
 
+const initialState = {
+    input: '',
+    imgUrl: '',
+    box: [],
+    route: 'signin',
+    isSignedIn: false,
+    user: {
+        id: '',
+        name: '',
+        email: '',
+        entries: 0,
+        joined: '',
+    }
+}
 class App extends Component {
     constructor() {
         super();
-        this.state = {
-            input: '',
-            imgUrl: '',
-            box: [],
-            route: 'signin',
-            isSignedIn: false,
-            user: {
-                id: '',
-                name: '',
-                email: '',
-                entries: 0,
-                joined: '',
-            }
-        }
+        this.state = initialState
     }
 
     calculateFaceLocation = (data) => {
@@ -94,6 +95,7 @@ class App extends Component {
     onButtonSubmit = () => {
         this.setState({ imgUrl: this.state.input });
         fetch("https://api.clarifai.com/v2/models/" + MODEL_ID + "/outputs", returnClarifyAPIRequestOptions(this.state.input))
+            .then(response => response.json())
             .then(result => {
                 if (result) {
                     fetch('http://localhost:8080/image', {
@@ -113,15 +115,17 @@ class App extends Component {
             .catch(error => console.log('error', error));
 
     }
+
     onRouteChange = (route) => {
         if (route === 'signout') {
-            this.setState({ isSignedIn: false })
+            this.setState(initialState)
         }
         else if (route === "home") {
             this.setState({ isSignedIn: true })
         }
         this.setState({ route: route })
     }
+
     loadUser = (data) => {
         this.setState({
             user: {
@@ -138,13 +142,12 @@ class App extends Component {
         return (
             <div>
                 <div className="App">
-                    {/* <ParticlesBg type={backgroundDesigns[(Math.floor(Math.random() * backgroundDesigns.length))]} bg={true} /> */}
-                    <ParticlesBg type='cobweb' bg={true} />
-
+                    <ParticlesBg type={backgroundDesigns[(Math.floor(Math.random() * backgroundDesigns.length))]} bg={true} />
                     <Navigation onRouteChange={this.onRouteChange} isSignedIn={this.state.isSignedIn} />
+                    <Logo />
+
                     {this.state.route === 'home'
                         ? <div>
-                            <Logo />
                             <Rank name={this.state.user.name} entries={this.state.user.entries} />
                             <ImageLinkForm onInputChange={this.onInputChange} onButtonSubmit={this.onButtonSubmit} />
                             <FaceRecognition box={this.state.box} imgUrl={this.state.imgUrl} />
