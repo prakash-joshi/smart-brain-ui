@@ -94,26 +94,30 @@ class App extends Component {
 
     onButtonSubmit = () => {
         this.setState({ imgUrl: this.state.input });
-        fetch("https://api.clarifai.com/v2/models/" + MODEL_ID + "/outputs", returnClarifyAPIRequestOptions(this.state.input))
-            .then(response => response.json())
-            .then(result => {
-                if (result) {
-                    fetch('http://localhost:8080/image', {
-                        method: 'PUT',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            id: this.state.user.id
+        if (!this.state.input) {
+            alert('Please provide an image url');
+        }
+        else {
+            fetch("https://api.clarifai.com/v2/models/" + MODEL_ID + "/outputs", returnClarifyAPIRequestOptions(this.state.input))
+                .then(response => response.json())
+                .then(result => {
+                    if (result) {
+                        fetch('http://localhost:8080/image', {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                id: this.state.user.id
+                            })
                         })
-                    })
-                        .then(response => response.json())
-                        .then(count => {
-                            this.setState(Object.assign(this.state.user, { entries: count }))
-                        })
-                }
-                this.displayFaceBox(this.calculateFaceLocation(result));
-            })
-            .catch(error => console.log('error', error));
-
+                            .then(response => response.json())
+                            .then(count => {
+                                this.setState(Object.assign(this.state.user, { entries: count }))
+                            })
+                    }
+                    this.displayFaceBox(this.calculateFaceLocation(result));
+                })
+                .catch(error => console.log('error', error));
+        }
     }
 
     onRouteChange = (route) => {
