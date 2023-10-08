@@ -13,7 +13,7 @@ import Register from './components/Register/Register';
 const backgroundDesigns = ["circle", "cobweb", "square", "tadpole", "random", "custom", "fountain", "color"]
 const PAT = 'a9b4ebcc1ec54675a183c5b8e951c2eb';
 const USER_ID = 'joshi-prakash';
-const APP_ID = 'facerecognitionbrain';
+const APP_ID = 'smart-brain';
 const MODEL_ID = 'face-detection';
 const returnClarifyAPIRequestOptions = (imageUrl) => {
     // const MODEL_VERSION_ID = '6dc7e46bc9124c5c8824be4822abe105'; //  this is optional
